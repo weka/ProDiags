@@ -1,0 +1,5 @@
+WekaIO_ProDiags tool version 0.1
+Written by Daniel Slabodar (Ocobter 2020) bugz to daniel@i-clef.com, daniels@weka.io or dslabodar@gmail.com
+
+Tool is written in Python language to supprot multitrheaded and multinode runtime of various hardware diagnostic scripts allocated in testbank directory
+
