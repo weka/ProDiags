@@ -9,6 +9,8 @@ import argparse
 from scp import SCPClient
 from paramiko import SSHClient,AutoAddPolicy
 import json
+import config
+import traceback
 
 def threaded(fn):
     """
@@ -32,7 +34,8 @@ class Connection:
     def open(self):
         self.ssh = SSHClient()
         self.ssh.set_missing_host_key_policy(AutoAddPolicy())
-        self.ssh.connect(self.host, username=self.username, password=self.password)
+        self.ssh.connect(self.host, username=self.username, password=self.password,
+                         timeout = config.SSH_CONNECT_TIMEOUT,auth_timeout = config.SSH_AUTH_TIMEOUT)
         self.scp = SCPClient(self.ssh.get_transport())
 
     def close(self):
@@ -45,11 +48,16 @@ class Connection:
         self.scp.put(source,recursive=True,remote_path = dest)
 
     def run(self,cmd):
-        stdin, stdout, stderr = self.ssh.exec_command(cmd)
-        status = stdout.channel.recv_exit_status()
-        response = stdout.read()
-        error = stderr.read()
-        return {'status':status,'response':response.decode("utf-8") ,'error':error.decode("utf-8")}
+        try:
+            stdin, stdout, stderr = self.ssh.exec_command(cmd,timeout = config.SSH_EXEC_TIMEOUT)
+            status = stdout.channel.recv_exit_status()
+            response = stdout.read()
+            error = stderr.read()
+            return {'status':status,'response':response.decode("utf-8") ,'error':error.decode("utf-8")}
+        except:
+            return {'status': -123,
+                    'description':'Failed to run command',
+                    'traceback':traceback.format_exc()}
 
 # Tester class
 class Tester:
@@ -65,13 +73,14 @@ class Tester:
         for i,t in enumerate(self.tests):
             print ("%s. %s"%(i+1,t))
 
+# Getting list of servers output from weka cluster host command performed locally on backend system
     def get_servers(self):
         lst = os.popen("weka cluster host | grep HostId | awk {'print $3'} | uniq | sort").read().split()
         if not lst:
             print('Could not find "weka cluster host" command in that system')
             sys.exit(1)
         else:
-            return [Connection({'host':ip,'username':'root','password':''}) for ip in lst]
+            return [Connection({'host':ip,'username':config.USERNAME,'password':config.PASSWORD}) for ip in lst]
 
 # Testbank directory within the tool directory includes the tests fo runtime
     def get_tests(self):
@@ -84,12 +93,18 @@ class Tester:
 # 4. Execute the required tests on server
     @threaded
     def run_tests_on_server(self,server,test_indexes):
-        server.open()
+        try:
+            server.open()
+        except:
+            self.results[server.host] = {'status': -124,
+                                         'description':'Failed to open SSH connection',
+                                         'traceback':traceback.format_exc()}
+            return            
         server.run('rm -rf /tmp/testbank')
         server.copy(str(self.path.joinpath("testbank")),'/tmp')       
         self.results[server.host] = {}
         for test in [self.tests[i-1] for i in test_indexes]:
-            results = server.run('/tmp/testbank/%s/%s.sh'%(test,test))
+            results = server.run('/tmp/testbank/%s/%s.py'%(test,test))
             self.results[server.host][test]=results
         server.run('rm -rf /tmp/testbank')
         server.close()
