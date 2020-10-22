@@ -108,8 +108,17 @@ class Tester:
             self.results[server.host][test]=results
         server.run('rm -rf /tmp/testbank')
         server.close()
-        
-            
+
+
+    def get_errors_only(self):
+
+        def errors_on_server(server_results):
+            return server_results if server_results.get('status',0) == -124 else \
+                   dict([(k,v) for (k,v) in server_results.items() if v['status']!=0])
+
+        return dict([(server,errors_on_server(results)) for server,results in self.results.items()])
+
+
     def run_tests(self,test_indexes=[],run_all=False):
         if run_all:
             test_indexes = [i+1 for i in range(len(self.tests))]
@@ -126,6 +135,7 @@ if __name__=="__main__":
     parser.add_argument("-l","--list",  action='store_true',help="Show all available tests")
     parser.add_argument("-r","--run", nargs='+',metavar='N',type=int,help="Run specified tests")
     parser.add_argument("-ra","--runall", action='store_true',help="Run all available tests")
+    parser.add_argument("-e", "--errors_only", action='store_true',help="Show failed tests only") 
     args = parser.parse_args()
     if len(sys.argv)==1:
         parser.print_help(sys.stderr)
@@ -138,4 +148,5 @@ if __name__=="__main__":
     elif args.runall:
         tester.run_tests(run_all=True)
 # Print test results
-    print (json.dumps(tester.results,sort_keys=True, indent=4))
+    res = tester.get_errors_only() if args.errors_only else tester.results
+    print (json.dumps(res,sort_keys=True, indent=4))
