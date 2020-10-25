@@ -2,7 +2,7 @@
 import subprocess, sys
 
 def test_name():
-    print("Basic memory test")
+    print("Out of Memory test")
 
 def run_command(cmd):
     c = cmd.split()
@@ -23,7 +23,7 @@ def run_command(cmd):
             break
 
 if __name__=="__main__":
-    cmd = ('find /sys -name ce\*  | while read f; do echo "$f $(cat $f)"; done')
+    cmd = ('grep -i kill /var/log/messages*')
     test_name()
     run_command(cmd)
 

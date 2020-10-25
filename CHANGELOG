@@ -1,3 +1,6 @@
 Version 0.1 10/12/2020
 Initial upload
 
+Version 0.1 10/25/2020
+Converted few scripts to run under Python environment
+Added -e option to display errors only

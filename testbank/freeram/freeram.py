@@ -1,34 +1,34 @@
-#!/bin/bash
+#!/usr/bin/env python3
+import subprocess, sys
 
-# Setting return value
-ret=""
+def test_name():
+    print("Free RAM test")
 
-function scriptname () {
-# Script descriptive name
-if [ "$name_enabled" == "true" ]; then
-	echo "Checking if OS has enough RAM"
-fi
-}
+def run_command(cmd):
+    c = cmd.split()
+    print("Command executed : " + cmd)
+    process = subprocess.Popen(c, stdout=subprocess.PIPE, universal_newlines=True)
 
-function startscript () {
+    while True:
+        output = process.stdout.readline()
+        print(output.strip())
+        # Do something else
+        return_code = process.poll()
+        if return_code is not None:
+            print('Return code : ', return_code)
+            sys.exit(return_code)
+            # Process has finished, read rest of the output 
+            for output in process.stdout.readlines():
+                print(output.strip())
+            break
 
-# Checking if OS has enough RAM for proper Weka.IO runtime - general requirement is 6.33G for each CPU core host if there is a cluster of 12 nodes
-current_free_ram=`free -g | grep -i "mem" | awk {'print $3'}`
-echo "Current amount of RAM that is free for Weka.IO on this node is: $current_free_ram"G""
-ret="0"
+if __name__=="__main__":
+    cmd = ('free -lm')
+    test_name()
+    run_command(cmd)
 
-}
 
-function checkstatus () {
-if [ $ret -ne 0 ]; then
-	exit 1
-else
-	exit 0
-fi
 
-}
 
-### MAIN ###
-scriptname
-startscript
-checkstatus
+
+
