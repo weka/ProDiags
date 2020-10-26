@@ -5,10 +5,11 @@ def test_name():
     print("Free RAM test")
 
 def run_command(cmd):
-    c = cmd.split()
     print("Command executed : " + cmd)
-    process = subprocess.Popen(c, stdout=subprocess.PIPE, universal_newlines=True)
+    # Had to parse this command explictly since, Pythong doesn't like to add quotes in list properly
+    process = subprocess.Popen(['free','-lm'], stdout=subprocess.PIPE, universal_newlines=True)
 
+    # Little ugly, make a man fly and bird walk method to bypass grep error return code properly
     while True:
         output = process.stdout.readline()
         print(output.strip())
@@ -20,13 +21,11 @@ def run_command(cmd):
             # Process has finished, read rest of the output 
             for output in process.stdout.readlines():
                 print(output.strip())
-            break
 
 if __name__=="__main__":
     cmd = ('free -lm')
     test_name()
     run_command(cmd)
-
 
 
 

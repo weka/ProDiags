@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-import subprocess, sys
+import subprocess, sys, os
 
 def test_name():
     print("Basic memory test")
 
+def create_file(filename,cmd):
+    f = open(filename, "w")
+    f.write(cmd)
+    f.close()
+
 def run_command(cmd):
     c = cmd.split()
     print("Command executed : " + cmd)
-    process = subprocess.Popen(c, stdout=subprocess.PIPE, universal_newlines=True)
-
+    process = subprocess.Popen(['sh',filename], stdout=subprocess.PIPE, universal_newlines=True)
     while True:
         output = process.stdout.readline()
         print(output.strip())
@@ -23,12 +27,8 @@ def run_command(cmd):
             break
 
 if __name__=="__main__":
-    cmd = ('find /sys -name ce\*  | while read f; do echo "$f $(cat $f)"; done')
+    cmd = ('/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done')
+    filename = ('exec.sh')
     test_name()
+    create_file(filename,cmd)
     run_command(cmd)
-
-
-
-
-
-
