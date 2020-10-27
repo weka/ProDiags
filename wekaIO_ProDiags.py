@@ -30,6 +30,7 @@ class Connection:
         self.password = server['password']
         self.ssh = None
         self.scp = None
+        
 
     def open(self):
         self.ssh = SSHClient()
@@ -118,13 +119,26 @@ class Tester:
 
         return dict([(server,errors_on_server(results)) for server,results in self.results.items()])
 
-
+    def split_tests(self,test_indexes):
+        first_server,all_servers = [],[]
+        for i in test_indexes:
+            test = self.tests[i-1] 
+            lines = open(self.path.joinpath('testbank/%s/%s.py'%(test,test))).readlines()
+            if "#run_once" in [x.lower().strip() for x in lines]:
+                first_server.append(i)
+            else:
+                all_servers.append(i)
+        return first_server,all_servers
+            
     def run_tests(self,test_indexes=[],run_all=False):
         if run_all:
             test_indexes = [i+1 for i in range(len(self.tests))]
         self.results = {}
-        threads = [self.run_tests_on_server(server,test_indexes) for \
-                   server in self.servers]
+        run_on_first_server,run_on_all_servers = self.split_tests(test_indexes)
+        first_server_thread = self.run_tests_on_server(self.servers[0],test_indexes)
+        other_servers_threads = [self.run_tests_on_server(server,run_on_all_servers) for \
+                   server in self.servers[1:]]
+        threads = [first_server_thread]+other_servers_threads                              
         for thread in threads:
             thread.join()
 

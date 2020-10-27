@@ -4,3 +4,7 @@ Initial upload
 Version 0.1 10/25/2020
 Converted few scripts to run under Python environment
 Added -e option to display errors only
+
+Version 0.1 10/27/2020
+Added #run_once option in test, so test is run on the first available server
+once
