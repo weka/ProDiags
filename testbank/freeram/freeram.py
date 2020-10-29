@@ -7,7 +7,7 @@ def test_name():
 def run_command(cmd):
     print("Command executed : " + cmd)
     # Had to parse this command explictly since, Pythong doesn't like to add quotes in list properly
-    process = subprocess.Popen(['free','-lm'], stdout=subprocess.PIPE, universal_newlines=True)
+    process = subprocess.Popen(['free','-lh'], stdout=subprocess.PIPE, universal_newlines=True)
 
     # Little ugly, make a man fly and bird walk method to bypass grep error return code properly
     while True:
@@ -23,7 +23,7 @@ def run_command(cmd):
                 print(output.strip())
 
 if __name__=="__main__":
-    cmd = ('free -lm')
+    cmd = ('free -lh')
     test_name()
     run_command(cmd)
 

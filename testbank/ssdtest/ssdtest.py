@@ -23,6 +23,8 @@ res=""
 rm -rf /tmp/ssd_output_list.sh
 rm -rf /tmp/ssd_compare.txt
 
+echo "SSD / NVMe test"
+
 weka cluster drive 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
 	echo "Could not find weka executable"
