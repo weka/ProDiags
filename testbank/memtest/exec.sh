@@ -1,0 +1,1 @@
+/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done

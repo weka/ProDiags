@@ -76,7 +76,7 @@ class Tester:
 
 # Getting list of servers output from weka cluster host command performed locally on backend system
     def get_servers(self):
-        lst = os.popen("weka cluster host | grep HostId | awk {'print $3'} | uniq | sort").read().split()
+        lst = os.popen("weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
         if not lst:
             print('Could not find "weka cluster host" command in that system')
             sys.exit(1)
