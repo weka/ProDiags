@@ -1,5 +1,16 @@
-WekaIO_ProDiags tool version 0.1
+WekaIO_ProDiags tool version 0.2
 Written by Daniel Slabodar (Ocobter 2020) bugz to daniel@i-clef.com, daniels@weka.io or dslabodar@gmail.com
 
 Tool is written in Python language to supprot multitrheaded and multinode runtime of various hardware diagnostic scripts allocated in testbank directory
 
+
+usage: wekaIO_ProDiags.py [-h] [-u] [-l] [-r N [N ...]] [-ra] [-e]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u, --update          Software update
+  -l, --list            Show all available tests
+  -r N [N ...], --run N [N ...]
+                        Run specified tests
+  -ra, --runall         Run all available tests
+  -e, --errors_only     Show failed tests only
