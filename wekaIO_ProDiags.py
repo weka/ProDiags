@@ -11,6 +11,9 @@ from paramiko import SSHClient,AutoAddPolicy
 import json
 import config
 import traceback
+import requests
+import io
+import tarfile
 
 def threaded(fn):
     """
@@ -142,10 +145,23 @@ class Tester:
         for thread in threads:
             thread.join()
 
+    def update(self):
+        resp = requests.get(config.TAR_URL)
+        fo = io.BytesIO(resp.content)
+        tar = tarfile.open(fileobj = fo)
+        cur_version = float(tar.extractfile("./VERSION").read().decode("utf-8").strip())
+        my_version = float(open(self.path.joinpath("VERSION")).read().strip())                           
+        if cur_version>my_version:
+            answer = input("There is new version, do you want to update? (yes/no): ")
+            if answer.lower() in ["y","yes"]:
+                tar.extractall()
+                           
+
 # MAIN and arguments parser
 if __name__=="__main__":
     tester = Tester()
     parser = argparse.ArgumentParser()
+    parser.add_argument("-u","--update",  action='store_true',help="Software update")
     parser.add_argument("-l","--list",  action='store_true',help="Show all available tests")
     parser.add_argument("-r","--run", nargs='+',metavar='N',type=int,help="Run specified tests")
     parser.add_argument("-ra","--runall", action='store_true',help="Run all available tests")
@@ -155,7 +171,9 @@ if __name__=="__main__":
         parser.print_help(sys.stderr)
         sys.exit(1)
         args=parser.parse_args()
-    if args.list:
+    if args.update:
+        tester.update()
+    elif args.list:
         tester.pp_tests()
     elif args.run:
         tester.run_tests(args.run)
