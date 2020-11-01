@@ -14,3 +14,22 @@ optional arguments:
                         Run specified tests
   -ra, --runall         Run all available tests
   -e, --errors_only     Show failed tests only
+
+Neeed Python versions and libraries:
+====================================
+threading Thread
+pathlib
+time sleep
+random randint
+os
+sys
+argparse
+scp SCPClient
+paramiko SSHClient,AutoAddPolicy
+json
+config
+traceback
+requests
+io
+tarfile
+====================================
