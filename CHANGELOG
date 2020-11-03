@@ -8,3 +8,7 @@ Added -e option to display errors only
 Version 0.2 11/01/2020
 Added update option using -u command line option VERSION file used to update
 Added several new tests in testbank
+
+Version 0.3 11/03/2020
+Added support for version 3.9.0 for performing SSD test as weka output is
+changed for weka cluster drive and weka cluster host commands

@@ -31,7 +31,12 @@ if [ $? -eq 1 ]; then
 	exit 1
 fi
 
-weka cluster drive | grep -i 'diskid\|active' | awk {'print "echo ============================== ;\n echo NodeId: "$8" and DiskId: "$2" && weka debug manhole -J -n "$8" ssd_get_nvme_smart_log_page diskId="$2" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh
+weka_version=`weka version | grep "* " | sed 's/\*//g'`
+if [ "$weka_version" == " 3.9.0" ]; then
+	weka cluster drive | grep -i 'active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh
+else
+	weka cluster drive | grep -i 'active' | awk {'print "echo ============================== ;\n echo NodeId: "$8" and DiskId: "$2" && weka debug manhole -J -n "$8" ssd_get_nvme_smart_log_page diskId="$2" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh
+fi
 
 num_of_disks=`cat /tmp/ssd_output_list.sh | grep -v "=====" | wc -l`
 echo "Number of media found: $num_of_disks disks"
@@ -63,7 +68,7 @@ for i in `seq $iterations`; do
 	fi
 	available_spare_threshold=`cat /tmp/ssd_compare.txt | grep -i "available_spare_threshold" | head -$i | tail -1`
 	available_spare_threshold_res=`echo $available_spare_threshold | awk {'print $2'}`
-	if [ $available_spare_threshold_res -ne $spares_thershold ]; then
+	if [ $available_spare_threshold_res -ne $spares_threshold ]; then
 		echo "available_spare_threshold parameter displaying : $available_threshold_spare_res for $diskid"
 		res="1"
 	fi

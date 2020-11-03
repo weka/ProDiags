@@ -77,9 +77,23 @@ class Tester:
         for i,t in enumerate(self.tests):
             print ("%s. %s"%(i+1,t))
 
+
+    def get_weka_version(self):
+        lines = os.popen("/usr/bin/weka version").readlines()
+        for l in lines:
+            l=l.strip()
+            if l.startswith("*"):
+                return l[1:].strip()
+        return 0 #just in case
+
+
 # Getting list of servers output from weka cluster host command performed locally on backend system
     def get_servers(self):
-        lst = os.popen("weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
+        ver = self.get_weka_version()
+        if ver>="3.9.0":
+            lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
+        else:
+            lst = os.popen("weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
         if not lst:
             print('Could not find "weka cluster host" command in that system')
             sys.exit(1)
@@ -152,7 +166,7 @@ class Tester:
         cur_version = float(tar.extractfile("./VERSION").read().decode("utf-8").strip())
         my_version = float(open(self.path.joinpath("VERSION")).read().strip())                           
         if cur_version>my_version:
-            answer = input("There is new version, do you want to update? (yes/no): ")
+            answer = input("There is new version, do you want to update? ")
             if answer.lower() in ["y","yes"]:
                 tar.extractall()
                            
