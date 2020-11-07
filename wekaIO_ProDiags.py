@@ -33,7 +33,6 @@ class Connection:
         self.password = server['password']
         self.ssh = None
         self.scp = None
-        
 
     def open(self):
         self.ssh = SSHClient()
@@ -71,6 +70,10 @@ class Tester:
         self.servers = self.get_servers()
         self.tests = self.get_tests()
         self.results = {}
+        self.json = True
+        self.out = True
+        self.errors_only = False
+        self.file = sys.stdout
 
     def pp_tests(self):
         print ("Available tests")
@@ -123,6 +126,10 @@ class Tester:
         self.results[server.host] = {}
         for test in [self.tests[i-1] for i in test_indexes]:
             results = server.run('/tmp/testbank/%s/%s.py'%(test,test))
+            if self.out:
+                if 'response' in results:
+                    print (results['response'],file=self.file)
+                    print (results['error'],file=self.file)
             self.results[server.host][test]=results
         server.run('rm -rf /tmp/testbank')
         server.close()
@@ -169,6 +176,12 @@ class Tester:
             answer = input("There is new version, do you want to update? ")
             if answer.lower() in ["y","yes"]:
                 tar.extractall()
+
+    def print_report(self):
+        if self.json:
+            res = self.get_errors_only() if self.errors_only else self.results
+            print (json.dumps(res,sort_keys=True, indent=4),file = self.file)
+        
                            
 
 # MAIN and arguments parser
@@ -179,12 +192,25 @@ if __name__=="__main__":
     parser.add_argument("-l","--list",  action='store_true',help="Show all available tests")
     parser.add_argument("-r","--run", nargs='+',metavar='N',type=int,help="Run specified tests")
     parser.add_argument("-ra","--runall", action='store_true',help="Run all available tests")
-    parser.add_argument("-e", "--errors_only", action='store_true',help="Show failed tests only") 
+    parser.add_argument("-e", "--errors_only", action='store_true',help="Show failed tests only")
+    parser.add_argument("-nj", "--nojson", action='store_true', help = "no json report")
+    parser.add_argument("-no", "--nooutput", action='store_true', help = "no scripts output")
+    parser.add_argument('-f','--file', type=argparse.FileType('w'), default=sys.stdout,
+                         metavar='PATH',
+                        help="Output file (default: standard output)")
+    
     args = parser.parse_args()
     if len(sys.argv)==1:
         parser.print_help(sys.stderr)
         sys.exit(1)
         args=parser.parse_args()
+    if args.nojson:
+        tester.json = False
+    if args.nooutput:
+        tester.out = False
+    if args.errors_only:
+        tester.errors_only = True
+    tester.file = args.file
     if args.update:
         tester.update()
     elif args.list:
@@ -193,6 +219,6 @@ if __name__=="__main__":
         tester.run_tests(args.run)
     elif args.runall:
         tester.run_tests(run_all=True)
+    tester.print_report()
 # Print test results
-    res = tester.get_errors_only() if args.errors_only else tester.results
-    print (json.dumps(res,sort_keys=True, indent=4))
+ 

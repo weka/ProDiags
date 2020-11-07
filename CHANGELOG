@@ -12,3 +12,8 @@ Added several new tests in testbank
 Version 0.3 11/03/2020
 Added support for version 3.9.0 for performing SSD test as weka output is
 changed for weka cluster drive and weka cluster host commands
+
+Version 0.4 11/07/2020
+Added beautifier for output to text and file of reported logs
+Added freespace test for Weka mounted partition to calculated required space
+for Weka installation
