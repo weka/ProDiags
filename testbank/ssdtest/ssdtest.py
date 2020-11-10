@@ -17,7 +17,7 @@ max_temperature="550" # in 550 = 55.0C
 spares="95" # lowest spare for SSD endurance
 spares_threshold="5" # statically set by system to 5
 
-res=""
+res="0"
 
 # Clean process
 rm -rf /tmp/ssd_output_list.sh

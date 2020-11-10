@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#run_once
 import subprocess, sys, os
 
 def test_name():

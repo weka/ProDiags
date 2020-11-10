@@ -1,12 +1,10 @@
-WekaIO_ProDiags tool version 0.4
-Written by Daniel Slabodar (Ocobter 2020) bugz to daniel@i-clef.com, daniels@weka.io or dslabodar@gmail.com
+WekaIO_ProDiags tool version 0.5
+Written by Daniel Slabodar (October 2020) bugz to daniel@i-clef.com, daniels@weka.io or dslabodar@gmail.com
 
-Tool is written in Python language to supprot multitrheaded and multinode runtime of various hardware diagnostic scripts allocated in testbank directory
-
-
+Tool is written in Python language to supprot multithreaded and multinode runtime of various hardware diagnostic tests allocated in testbank directory for Weka.IO
+==============================================================================
 usage: wekaIO_ProDiags.py [-h] [-u] [-l] [-r N [N ...]] [-ra] [-e] [-nj] [-no]
                           [-f PATH]
-
 optional arguments:
   -h, --help            show this help message and exit
   -u, --update          Software update
@@ -19,7 +17,21 @@ optional arguments:
   -no, --nooutput       no scripts output
   -f PATH, --file PATH  Output file (default: standard output)
 
-Neeed Python versions and libraries:
+Example: ./wekaIO_ProDiags.py -ra -e -no (would run all tests in testbank displaying errors only and JSON output only format)
+         ./wekaIO_ProDiags.py -l (would display list of tests in testbank)
+	 ./wekaIO_ProDiags.py -r 3 -e -no (would run test number 3 from testbank displaying errors only and JSON output only format)
+	 ./wekaIO_ProDiags.py -u (would test if there are any new updates - URL configured in config.py section)
+
+Installation & Runtime:
+	 Run as sudo user:
+	 mkdir WekaIO_ProDiags
+	 cd WekaIO_ProDiags
+	 wget http://ssh.i-clef.com/WekaIO_ProDiags/latest.tar
+	 tar xvf latest.tar
+	 ./wekaIO_ProDiags.py
+         
+Please use setup.sh to install the required python libraries!
+Needed Python 3.x.x libraries:
 ====================================
 threading Thread
 pathlib

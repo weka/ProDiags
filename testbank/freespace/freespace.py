@@ -3,7 +3,7 @@
 # TODO:
 
 # Globals
-res=""
+res="0"
 
 echo "Find out if partition mounted with Weka has enough free space"
 

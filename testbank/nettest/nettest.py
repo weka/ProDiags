@@ -2,7 +2,7 @@
 # Test to check on errors on all backend NICs using ethtool -S <device_name> which are up
 #
 # Global settings
-res=""
+res="0"
 
 # Looking for ethtool to to scan for port errors
 which ethtool 1> /dev/null 2> /dev/null 

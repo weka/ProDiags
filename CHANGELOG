@@ -17,3 +17,7 @@ Version 0.4 11/07/2020
 Added beautifier for output to text and file of reported logs
 Added freespace test for Weka mounted partition to calculated required space
 for Weka installation
+
+Version 0.5 11/09/2020
+Added Free boot device test, Physical installed RAM allocation test
+Added setup.sh to install python packages as needed

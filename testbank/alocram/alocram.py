@@ -2,7 +2,7 @@
 #run_once
     
 # Globals
-res=""
+res="0"
 
 echo "Testing Weka allocated RAM that is equal between hosts"
 
