@@ -80,7 +80,6 @@ class Tester:
         for i,t in enumerate(self.tests):
             print ("%s. %s"%(i+1,t))
 
-
     def get_weka_version(self):
         lines = os.popen("/usr/bin/weka version").readlines()
         for l in lines:
@@ -143,6 +142,7 @@ class Tester:
 
         return dict([(server,errors_on_server(results)) for server,results in self.results.items()])
 
+# If #run_once string found in specific test, test would be executed on one of the servers once
     def split_tests(self,test_indexes):
         first_server,all_servers = [],[]
         for i in test_indexes:
@@ -173,7 +173,7 @@ class Tester:
         cur_version = float(tar.extractfile("./VERSION").read().decode("utf-8").strip())
         my_version = float(open(self.path.joinpath("VERSION")).read().strip())                           
         if cur_version>my_version:
-            answer = input("There is new version, do you want to update? ")
+            answer = input("There is new version, do you want to update? ((Y)es/(N)o)")
             if answer.lower() in ["y","yes"]:
                 tar.extractall()
 
@@ -193,7 +193,7 @@ if __name__=="__main__":
     parser.add_argument("-r","--run", nargs='+',metavar='N',type=int,help="Run specified tests")
     parser.add_argument("-ra","--runall", action='store_true',help="Run all available tests")
     parser.add_argument("-e", "--errors_only", action='store_true',help="Show failed tests only")
-    parser.add_argument("-nj", "--nojson", action='store_true', help = "no json report")
+    parser.add_argument("-nj", "--nojson", action='store_true', help = "no JSON report")
     parser.add_argument("-no", "--nooutput", action='store_true', help = "no scripts output")
     parser.add_argument('-f','--file', type=argparse.FileType('w'), default=sys.stdout,
                          metavar='PATH',

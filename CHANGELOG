@@ -21,3 +21,8 @@ for Weka installation
 Version 0.5 11/09/2020
 Added Free boot device test, Physical installed RAM allocation test
 Added setup.sh to install python packages as needed
+
+Version 0.6 11/14/2020
+Fixed output and errors in some tests with Jacky feedback
+Added hostname and IP addresses return in tests
+Minor typos and fixes

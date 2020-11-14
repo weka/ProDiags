@@ -4,8 +4,14 @@
 # Globals
 res="0"
 
-echo "Testing Weka nodes physical RAM that is equal between hosts"
-
+echo "Test name: Testing Weka nodes physical RAM that is equal between hosts"
+which hostname 1> /dev/null 2> /dev/null
+if [ $? -eq 1 ]; then
+        echo "Hostname command not found"
+else
+        echo "Hostname: `hostname`"
+        echo "IP addresses: `hostname -I`"
+fi
 diff=`weka cluster host info-hw | grep -i "total:" | awk {'print $2'} | uniq | wc -l`
 if [ "$diff" != "1" ]; then 
 	echo "At least one of the hosts has RAM incorrectly allocated, please check with free -hl"

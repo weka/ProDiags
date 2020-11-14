@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-import subprocess, sys, os
+import subprocess, sys, os, socket
 
 def test_name():
-    print("Basic memory test")
+    print("Test name: Basic memory test")
+
+def test_host():
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    print("Hostname: " + hostname)
+    print("IP address: " + IPAddr)
 
 def create_file(filename,cmd):
     f = open(filename, "w")
@@ -27,8 +33,9 @@ def run_command(cmd):
             break
 
 if __name__=="__main__":
-    cmd = ('/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done')
+    cmd = ('/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done 2> /dev/null')
     filename = ('exec.sh')
     test_name()
+    test_host()
     create_file(filename,cmd)
     run_command(cmd)

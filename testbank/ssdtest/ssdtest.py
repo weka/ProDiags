@@ -23,8 +23,15 @@ res="0"
 rm -rf /tmp/ssd_output_list.sh
 rm -rf /tmp/ssd_compare.txt
 
-echo "SSD / NVMe test"
+echo "Test name: SSD / NVMe test"
 
+which hostname 1> /dev/null 2> /dev/null
+if [ $? -eq 1 ]; then
+        echo "Hostname command not found"
+else
+        echo "Hostname: `hostname`"
+        echo "IP address: `hostname -I`"
+fi
 weka cluster drive 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
 	echo "Could not find weka executable"
@@ -33,9 +40,9 @@ fi
 
 weka_version=`weka version | grep "* " | sed 's/\*//g'`
 if [ "$weka_version" == " 3.9.0" ]; then
-	weka cluster drive | grep -i 'active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh
+	weka cluster drive | grep -i 'active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
 else
-	weka cluster drive | grep -i 'active' | awk {'print "echo ============================== ;\n echo NodeId: "$8" and DiskId: "$2" && weka debug manhole -J -n "$8" ssd_get_nvme_smart_log_page diskId="$2" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh
+	weka cluster drive | grep -i 'active' | awk {'print "echo ============================== ;\n echo NodeId: "$8" and DiskId: "$2" && weka debug manhole -J -n "$8" ssd_get_nvme_smart_log_page diskId="$2" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
 fi
 
 num_of_disks=`cat /tmp/ssd_output_list.sh | grep -v "=====" | wc -l`

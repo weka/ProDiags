@@ -4,6 +4,17 @@
 # Global settings
 res="0"
 
+echo "Test name: Looking for errors on network ports"
+which hostname 1> /dev/null 2> /dev/null
+if [ $? -eq 1 ]; then
+        echo "Hostname command not found"
+else
+        echo "Hostname: `hostname`"
+        echo "IP address: `hostname -I`"
+fi
+
+
+
 # Looking for ethtool to to scan for port errors
 which ethtool 1> /dev/null 2> /dev/null 
 if [ $? -eq 1 ]; then
@@ -21,10 +32,10 @@ for f in /sys/class/net/*; do
 	operstate=$(cat $f/operstate)
 	if [ "$operstate" == "up" ]; then
 		echo "Looking at device name: $dev for errors"
-		ethtool -S $dev|grep -i "err" | grep ": [1-9]"
+		ethtool -S $dev|grep -i "_err" | grep ": [1-9]"
 		if [ $? -ne 1 ]; then
 			echo "Some errors found on $dev device below:"
-			ethtool -S $dev | grep -i "err"
+			ethtool -S $dev | grep -i "_err" | grep ": [^0]"
 			res="1"
 		else
 			echo "No errors found for $dev device name"

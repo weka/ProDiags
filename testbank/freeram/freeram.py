@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
-import subprocess, sys
+import subprocess, sys, socket
 
 def test_name():
-    print("Free RAM test")
+    print("Test name: Free RAM test")
+
+def test_host():
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    print("Hostname: " + hostname)
+    print("IP address: " + IPAddr)
 
 def run_command(cmd):
-    print("Command executed : " + cmd)
-    # Had to parse this command explictly since, Pythong doesn't like to add quotes in list properly
+    print("Command executed : " + cmd,flush=True)
+    # Had to parse this command explictly since, Python doesn't like to add quotes in list properly
     process = subprocess.Popen(['free','-lh'], stdout=subprocess.PIPE, universal_newlines=True)
 
     # Little ugly, make a man fly and bird walk method to bypass grep error return code properly
@@ -25,9 +31,5 @@ def run_command(cmd):
 if __name__=="__main__":
     cmd = ('free -lh')
     test_name()
+    test_host()
     run_command(cmd)
-
-
-
-
-

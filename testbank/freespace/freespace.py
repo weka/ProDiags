@@ -5,13 +5,20 @@
 # Globals
 res="0"
 
-echo "Find out if partition mounted with Weka has enough free space"
+echo "Test name: Find out if partition mounted with Weka has enough free space"
+which hostname 1> /dev/null 2> /dev/null
+if [ $? -eq 1 ]; then
+        echo "Hostname command not found"
+else
+        echo "Hostname: `hostname`"
+        echo "IP address: `hostname -I`"
+fi
 
 rm -rf /tmp/weka_exists* 1> /dev/null 2> /dev/null
-find / -name 'data'|grep weka > /tmp/weka_exists.txt
-cat /tmp/weka_exists.txt|grep -v wekatester > /tmp/weka_exists2.txt
+find / -name 'data' | grep weka 2> /dev/null > /tmp/weka_exists.txt
+cat /tmp/weka_exists.txt | grep -v wekatester > /tmp/weka_exists2.txt
 
-cat /tmp/weka_exists2.txt | grep -i data |grep -i weka | head -1
+cat /tmp/weka_exists2.txt | grep -i data |grep -i weka | head -1 1> /dev/null 2> /dev/null
 if [ $? -eq 0 ]; then
 	loc=`cat /tmp/weka_exists2.txt | grep -i data |grep -i weka | head -1`
 	inst_loc=`dirname $loc`
