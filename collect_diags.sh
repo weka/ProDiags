@@ -31,7 +31,7 @@ fi
 
 function set_alias()
 {
-sh mc alias set $name $url $akey $skey 1> /dev/null 2> /dev/null
+./mc alias set $name $url $akey $skey 1> /dev/null 2> /dev/null
 }
 
 function get_weka_cluster_info()
