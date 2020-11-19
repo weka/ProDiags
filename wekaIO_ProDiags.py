@@ -74,6 +74,13 @@ class Tester:
         self.out = True
         self.errors_only = False
         self.file = sys.stdout
+        self.log_file = open('/var/log/WekaIO_ProDiags.log','w')
+
+
+    def print(self,*args):
+        print(*args,file = self.file)
+        print(*args,file = self.log_file)
+        
 
     def pp_tests(self):
         print ("Available tests")
@@ -89,7 +96,7 @@ class Tester:
         return 0 #just in case
 
 
-# Getting list of servers output from weka cluster host command performed locally on backend system
+    # Getting list of servers output from weka cluster host command performed locally on backend system
     def get_servers(self):
         ver = self.get_weka_version()
         if ver>="3.9.0":
@@ -102,15 +109,15 @@ class Tester:
         else:
             return [Connection({'host':ip,'username':config.USERNAME,'password':config.PASSWORD}) for ip in lst]
 
-# Testbank directory within the tool directory includes the tests fo runtime
+    # Testbank directory within the tool directory includes the tests fo runtime
     def get_tests(self):
         return [f.name for f in os.scandir(self.path.joinpath("testbank")) if f.is_dir()]     
 
-# Multithreaded connection to N servers and execute specified tests according to process:
-# 1. Open connection
-# 2. Clean remote server for exsting tests / outputs logs
-# 3. Copy updated testbank to remote server
-# 4. Execute the required tests on server
+    # Multithreaded connection to N servers and execute specified tests according to process:
+    # 1. Open connection
+    # 2. Clean remote server for exsting tests / outputs logs
+    # 3. Copy updated testbank to remote server
+    # 4. Execute the required tests on server
     @threaded
     def run_tests_on_server(self,server,test_indexes):
         try:
@@ -127,8 +134,8 @@ class Tester:
             results = server.run('/tmp/testbank/%s/%s.py'%(test,test))
             if self.out:
                 if 'response' in results:
-                    print (results['response'],file=self.file)
-                    print (results['error'],file=self.file)
+                    self.print (results['response'])
+                    self.print (results['error'])
             self.results[server.host][test]=results
         server.run('rm -rf /tmp/testbank')
         server.close()
@@ -142,7 +149,7 @@ class Tester:
 
         return dict([(server,errors_on_server(results)) for server,results in self.results.items()])
 
-# If #run_once string found in specific test, test would be executed on one of the servers once
+    # If #run_once string found in specific test, test would be executed on one of the servers once
     def split_tests(self,test_indexes):
         first_server,all_servers = [],[]
         for i in test_indexes:
@@ -180,7 +187,9 @@ class Tester:
     def print_report(self):
         if self.json:
             res = self.get_errors_only() if self.errors_only else self.results
-            print (json.dumps(res,sort_keys=True, indent=4),file = self.file)
+            self.print (json.dumps(res,sort_keys=True, indent=4))
+        self.log_file.close()
+        os.system('./collect_diags.sh')
         
                            
 

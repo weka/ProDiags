@@ -26,3 +26,7 @@ Version 0.6 11/14/2020
 Fixed output and errors in some tests with Jacky feedback
 Added hostname and IP addresses return in tests
 Minor typos and fixes
+
+Version 0.7 11/19/2020
+Added ECC RAM test, added logs collection automatically to compatible S3
+bucket. Small fixes and addons

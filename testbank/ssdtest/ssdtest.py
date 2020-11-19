@@ -53,51 +53,50 @@ sh /tmp/ssd_output_list.sh | tee /tmp/ssd_compare.txt
 
 iterations=`cat /tmp/ssd_compare.txt | grep -i diskid | wc -l`
 for i in `seq $iterations`; do
-	diskid=`cat /tmp/ssd_compare.txt | grep -i diskid | head -$i | tail -1`
-	#echo $diskid
-	errMsg=`cat /tmp/ssd_compare.txt | grep -i errmsg | head -$i | tail -1`
+	diskid=`grep -i diskid /tmp/ssd_compare.txt | head -$i | tail -1`
+	errMsg=`grep -i errmsg /tmp/ssd_compare.txt | head -$i | tail -1`
 	errMsg_res=`echo $errMsg | awk {'print $2'}`
 	if [ "$errMsg_res" != "null" ]; then
 		echo "Error message displaying : $errMsg_res for $diskid"
 		res="1"
 	fi
-	readSuccess=`cat /tmp/ssd_compare.txt | grep -i readsuccess | head -$i | tail -1`
+	readSuccess=`grep -i readsuccess /tmp/ssd_compare.txt | head -$i | tail -1`
 	readSuccess_res=`echo $readSuccess | awk {'print $2'}`
 	if [ "$readSuccess_res" != "true" ]; then
 		echo "readSuccess parameter displaying : $readSuccess_res for $diskid"
 		res="1"
 	fi
-	available_spare=`cat /tmp/ssd_compare.txt | grep -i "available_spare:" | head -$i | tail -1`
+	available_spare=`grep -i "available_spare:" /tmp/ssd_compare.txt | head -$i | tail -1`
 	available_spare_res=`echo $available_spare | awk {'print $2'}`
 	if [ $available_spare_res -le $spares ]; then
 		echo "available_spare parameter displaying : $available_spare_res for $diskid"
 		res="1"
 	fi
-	available_spare_threshold=`cat /tmp/ssd_compare.txt | grep -i "available_spare_threshold" | head -$i | tail -1`
+	available_spare_threshold=`grep -i "available_spare_threshold" /tmp/ssd_compare.txt | head -$i | tail -1`
 	available_spare_threshold_res=`echo $available_spare_threshold | awk {'print $2'}`
 	if [ $available_spare_threshold_res -ne $spares_threshold ]; then
 		echo "available_spare_threshold parameter displaying : $available_threshold_spare_res for $diskid"
 		res="1"
 	fi
-	composite_temperature=`cat /tmp/ssd_compare.txt | grep -i "composite_temperature:" | head -$i | tail -1`
+	composite_temperature=`grep -i "composite_temperature:" /tmp/ssd_compare.txt | head -$i | tail -1`
 	composite_temperature_res=`echo $composite_temperature | awk {'print $2'}`
 	if [ $composite_temperature_res -gt $max_temperature ]; then
 		echo "composite_temperature parameter displaying : $composite_temperature_res for $diskid"
 		res="1"
 	fi
-	critical_composite_temperature_time=`cat /tmp/ssd_compare.txt | grep -i "critical_composite_temperature_time:" | head -$i | tail -1`
+	critical_composite_temperature_time=`grep -i "critical_composite_temperature_time:" /tmp/ssd_compare.txt | head -$i | tail -1`
 	critical_composite_temperature_time_res=`echo $critical_composite_temperature_time | awk {'print $2'}`
 	if [ $critical_composite_temperature_time_res -gt 0 ]; then
 		echo "critical_composite_temperature_time parameter displaying : $critical_composite_temperature_time_res for $diskid"
 		res="1"
 	fi
-	critical_warning=`cat /tmp/ssd_compare.txt | grep -i "critical_warning:" | head -$i | tail -1`
+	critical_warning=`grep -i "critical_warning:" /tmp/ssd_compare.txt | head -$i | tail -1`
 	critical_warning_res=`echo $critical_warning | awk {'print $2'}`
 	if [ $critical_warning_res -gt 0 ]; then
 		echo "critical_warning parameter displaying : $critical_warning_res for $diskid"
 		res="1"
 	fi
-	warning_composite_temperature_time=`cat /tmp/ssd_compare.txt | grep -i "warning_composite_temperature_time:" | head -$i | tail -1`
+	warning_composite_temperature_time=`grep -i "warning_composite_temperature_time:" /tmp/ssd_compare.txt | head -$i | tail -1`
 	warning_composite_temperature_time_res=`echo $warning_composite_temperature_time | awk {'print $2'}`
 	if [ $warning_composite_temperature_time_res -gt 0 ]; then
 		echo "warning_composite_temperature_time parameter displaying : $warning_composite_temperature_time_res for $diskid"
