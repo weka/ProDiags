@@ -83,7 +83,7 @@ class Tester:
         
 
     def pp_tests(self):
-        print ("Available tests")
+        print ("Available tests:")
         for i,t in enumerate(self.tests):
             print ("%s. %s"%(i+1,t))
 
@@ -183,13 +183,16 @@ class Tester:
             answer = input("There is new version, do you want to update? ((Y)es/(N)o)")
             if answer.lower() in ["y","yes"]:
                 tar.extractall()
+        else:
+            print ("No new updates found")
 
     def print_report(self):
         if self.json:
             res = self.get_errors_only() if self.errors_only else self.results
-            self.print (json.dumps(res,sort_keys=True, indent=4))
-        self.log_file.close()
-        os.system('./collect_diags.sh')
+            if res:
+                self.print (json.dumps(res,sort_keys=True, indent=4))
+                self.log_file.close()
+                os.system('./collect_diags.sh')
         
                            
 
