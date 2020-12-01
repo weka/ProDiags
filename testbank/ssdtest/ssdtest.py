@@ -19,6 +19,14 @@ spares_threshold="5" # statically set by system to 5
 
 res="0"
 
+function barline () {
+## barline
+echo "================================================================="
+}
+
+function testname () {
+## testname
+
 # Clean process
 rm -rf /tmp/ssd_output_list.sh
 rm -rf /tmp/ssd_compare.txt
@@ -32,6 +40,13 @@ else
         echo "Hostname: `hostname`"
         echo "IP address: `hostname -I`"
 fi
+}
+
+function testrun () {
+# Test run
+barline
+testname
+
 weka cluster drive 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
 	echo "Could not find weka executable"
@@ -103,9 +118,25 @@ for i in `seq $iterations`; do
 		res="1"
 	fi
 done
+}
 
-# Display exit status in case of errors
-if [ "$res" == "1" ]; then
-	exit 1
+# MAIN
+# If there is parameter after the script run command, output everything out
+if [ "$1" ]; then
+        testrun
+        if [ "$res" -eq "1" ]; then
+                exit 1
+        fi
+else
+        rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+        testrun > /tmp/$(basename $0).log
+        if [ "$res" -ne "0" ]; then
+                cat /tmp/$(basename $0).log
+                rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+                exit 1
+        else
+                rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+                exit 0
+        fi
 fi
 

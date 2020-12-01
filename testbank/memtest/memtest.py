@@ -1,41 +1,55 @@
-#!/usr/bin/env python3
-import subprocess, sys, os, socket
+#!/bin/bash
+    
+# Globals
+res="0"
 
-def test_name():
-    print("Test name: Basic memory test")
+function barline () {
+## barline
+echo "================================================================="
+}
 
-def test_host():
-    hostname = socket.gethostname()
-    IPAddr = socket.gethostbyname(hostname)
-    print("Hostname: " + hostname)
-    print("IP address: " + IPAddr)
+function testname () {
+## testname
+echo "Test name: Basic Memory test"
+which hostname 1> /dev/null 2> /dev/null
+if [ $? -eq 1 ]; then
+	echo "Hostname command not found"
+else
+	echo "Hostname: `hostname`"
+	echo "IP address: `hostname -I`"
+fi
+}
 
-def create_file(filename,cmd):
-    f = open(filename, "w")
-    f.write(cmd)
-    f.close()
+function testrun () {
+# Test run
+barline
+testname
 
-def run_command(cmd):
-    c = cmd.split()
-    print("Command executed : " + cmd)
-    process = subprocess.Popen(['sh',filename], stdout=subprocess.PIPE, universal_newlines=True)
-    while True:
-        output = process.stdout.readline()
-        print(output.strip())
-        # Do something else
-        return_code = process.poll()
-        if return_code is not None:
-            print('Return code : ', return_code)
-            sys.exit(return_code)
-            # Process has finished, read rest of the output 
-            for output in process.stdout.readlines():
-                print(output.strip())
-            break
+/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done
 
-if __name__=="__main__":
-    cmd = ('/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done 2> /dev/null')
-    filename = ('exec.sh')
-    test_name()
-    test_host()
-    create_file(filename,cmd)
-    run_command(cmd)
+if [ $? -eq 1 ]; then 
+        res="1"
+fi
+
+}
+
+# MAIN
+# If there is parameter after the script run command, output everything out
+
+if [ "$1" ]; then
+	testrun
+	if [ "$res" -eq "1" ]; then
+		exit 1
+	fi
+else
+	rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+	testrun > /tmp/$(basename $0).log
+	if [ "$res" -ne "0" ]; then
+		cat /tmp/$(basename $0).log
+		rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+		exit 1
+	else
+		rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+		exit 0
+	fi
+fi

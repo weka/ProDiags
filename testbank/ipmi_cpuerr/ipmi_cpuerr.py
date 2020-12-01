@@ -13,7 +13,7 @@ echo "================================================================="
 function testname () {
 ## testname
 
-echo "Test name: Testing Weka backend server for ECC errors in RAM"
+echo "Test name: Testing Weka backend server for CPU errors"
 which hostname 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
         echo "Hostname command not found"
@@ -98,9 +98,9 @@ function start_test()
 # Starting ECC DIMM test
 rm -rf /tmp/ipmiutil_output.txt
 ipmiutil sel -e > /tmp/ipmiutil_output.txt
-cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "asserted\|ecc" 1> /dev/null 2> /dev/null
+cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" | grep -i "processor" 1> /dev/null 2> /dev/null
 if [ $? -eq 0 ]; then
-	cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "asserted\|ecc"
+	cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" | grep -i "processor"
 	res="1"
 fi
 

@@ -4,6 +4,14 @@
 # Global settings
 res="0"
 
+function barline () {
+## barline
+echo "================================================================="
+}
+
+function testname () {
+## testname
+
 echo "Test name: Looking for errors on network ports"
 which hostname 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
@@ -12,8 +20,12 @@ else
         echo "Hostname: `hostname`"
         echo "IP address: `hostname -I`"
 fi
+}
 
-
+function testrun () {
+# Test run
+barline
+testname
 
 # Looking for ethtool to to scan for port errors
 which ethtool 1> /dev/null 2> /dev/null 
@@ -43,8 +55,26 @@ for f in /sys/class/net/*; do
 	fi
 	#printf "%10s [%s]: %10s (%s)\n" "$dev" "$addr" "$driver" "$operstate"
 done
+}
 
-if [ "$res" == "1" ]; then
-	exit 1
+# MAIN
+# If there is parameter after the script run command, output everything out
+if [ "$1" ]; then
+        testrun
+        if [ "$res" -eq "1" ]; then
+                exit 1
+        fi
+else
+        rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+        testrun > /tmp/$(basename $0).log
+        if [ "$res" -ne "0" ]; then
+                cat /tmp/$(basename $0).log
+                rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+                exit 1
+        else
+                rm /tmp/$(basename $0).log 1> /dev/null 2> /dev/null
+                exit 0
+        fi
 fi
+
 

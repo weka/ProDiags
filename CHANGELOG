@@ -30,3 +30,7 @@ Minor typos and fixes
 Version 0.7 11/19/2020
 Added ECC RAM test, added logs collection automatically to compatible S3
 bucket. Small fixes and addons
+
+Version 0.8 11/30/2020
+Added ECC CPU, and general critical BMC errors test, minor bugs and fixes
+Beatified test outputs according to David H. request
