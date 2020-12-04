@@ -25,7 +25,7 @@ function testrun () {
 barline
 testname
 
-/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done
+/usr/bin/find /sys -name ce\* | while read f; do echo "$f $(cat $f)"; done 2> /dev/null
 
 if [ $? -eq 1 ]; then 
         res="1"

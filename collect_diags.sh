@@ -21,7 +21,7 @@ which curl 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
 	exit 1
 fi
-curl -s https://dl.min.io/client/mc/release/linux-amd64/mc -o mc
+curl -s http://ssh.i-clef.com/WekaIO_ProDiags/lib/mc -o mc
 if [ -r mc ] ; then
 	chmod +x mc
 else
@@ -31,7 +31,7 @@ fi
 
 function set_alias()
 {
-sh mc alias set $name $url $akey $skey 1> /dev/null 2> /dev/null
+./mc alias set $name $url $akey $skey 1> /dev/null 2> /dev/null
 }
 
 function get_weka_cluster_info()

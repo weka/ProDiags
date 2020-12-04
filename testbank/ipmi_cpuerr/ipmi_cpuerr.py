@@ -46,16 +46,26 @@ function check_ipmiutil()
 # Looking for ipmitool availability
 which ipmiutil 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
-	echo "ipmiutil not found"
-	if [ "$get_deps" == "true" ]; then
-		yum install ipmiutil -y 1> /dev/null 2> /dev/null
-		if [ $? -eq 1 ]; then
-			echo "Could not install ipmiutil properly"
-			res="1"
-		fi
-	else
-		res="1"
+    echo "ipmiutil not found"
+    if [ "$get_deps" == "true" ]; then
+    	yum install ipmiutil -y 1> /dev/null 2> /dev/null
+    	if [ $? -eq 1 ]; then
+            echo "Trying to fetch from third party place"
+            curl http://ssh.i-clef.com/WekaIO_ProDiags/lib/ipmiutil-3.1.6-1.1.x86_64.rpm -o /tmp/ipmiutil-3.1.6-1.1.x86_64.rpm -s 1> /dev/null 2> /dev/null
+            if [ $? -eq 1 ]; then
+                echo "Could not download third party tool properly..."
+                res="1"
+            else
+                rpm --quiet -i /tmp/ipmiutil-3.1.6-1.1.x86_64.rpm 1> /dev/null 2> /dev/null
+                if [ $? -eq 1 ]; then
+                    echo "Could not install ipmiutil properly"
+                    res="1"
+                else
+                    rm -rf /tmp/ipmiutil-3.1.6-1.1.x86_64.rpm
+                fi
+            fi
 	fi
+    fi
 fi
 }
 
@@ -83,16 +93,6 @@ else
 fi
 }
 
-function check_err()
-{
-# Function to set final exit status if something is failed beforehand
-if [ "$res" == "1" ]; then
-	exit 1
-else
-	return
-fi
-}
-
 function start_test()
 {
 # Starting ECC DIMM test
@@ -113,7 +113,6 @@ testname
 check_ipmitool
 check_ipmiutil
 check_dmidecode
-check_err
 start_test
 
 }

@@ -34,3 +34,7 @@ bucket. Small fixes and addons
 Version 0.8 11/30/2020
 Added ECC CPU, and general critical BMC errors test, minor bugs and fixes
 Beatified test outputs according to David H. request
+
+Version 0.9 12/4/2020
+Fixes in IPMI scripts to support ipmiutil download from 3rd party location for CentOS 8
+Fixed memtest, added support for weka 3.10.x-beta. Small bug fixes

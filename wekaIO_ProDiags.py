@@ -101,8 +101,10 @@ class Tester:
         ver = self.get_weka_version()
         if ver>="3.9.0":
             lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
-        else:
-            lst = os.popen("weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
+        elif ver>="3.10.0.1-beta":
+            lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
+        elif ver>="3.8.1":
+            lst = os.popen("/usr/bin/weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
         if not lst:
             print('Could not find "weka cluster host" command in that system')
             sys.exit(1)
