@@ -12,6 +12,21 @@ now=$(date +"%m-%d-%Y_%H-%M-%S")
 cluster_name=""
 log_fname="/var/log/WekaIO_ProDiags.log"
 
+#internet_host="lib.ru"
+internet_host="adsba.com"
+
+function check_outer_space()
+{
+# Function to check internet connection
+ping -c 1 -i 1 -t 1 $internet_host 1> /dev/null 2> /dev/null
+if [ $? -ne 0 ]; then
+	echo "Internet connection is unavailable, not collecting logs"
+	exit 1
+fi
+
+
+}
+
 function get_minio()
 {
 #Getting Minio client
@@ -83,6 +98,7 @@ rm -rf ~/root/.mc*
 }
 
 # MAIN
+check_outer_space
 get_minio
 set_alias
 get_weka_cluster_info
