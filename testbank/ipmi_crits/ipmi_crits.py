@@ -100,7 +100,7 @@ rm -rf /tmp/ipmiutil_output.txt
 ipmiutil sel -e > /tmp/ipmiutil_output.txt
 cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" 1> /dev/null 2> /dev/null
 if [ $? -eq 0 ]; then
-	cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt"
+	cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" | tail -6
 	res="1"
 fi
 
