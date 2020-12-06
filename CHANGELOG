@@ -38,3 +38,10 @@ Beatified test outputs according to David H. request
 Version 0.9 12/4/2020
 Fixes in IPMI scripts to support ipmiutil download from 3rd party location for CentOS 8
 Fixed memtest, added support for weka 3.10.x-beta. Small bug fixes
+
+Version 1.0 12/6/2020
+Added support for versions 3.9.3, 3.9.2, 3.9.1. Cosmetics on output, internet
+connection verification, root user verification. Version output. Support for
+#dont_run parameter in test, so test is excluded. Removed white spaces on
+output of tests to look cleaner. If no -e specified everything is spit on the
+screen.

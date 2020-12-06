@@ -5,6 +5,7 @@ from time import sleep
 from random import randint
 from scp import SCPClient
 from paramiko import SSHClient,AutoAddPolicy
+import os
 
 def threaded(fn):
     """
@@ -15,6 +16,10 @@ def threaded(fn):
         thread.start()
         return thread
     return wrapper
+
+def remove_blank_lines(text):
+    return os.linesep.join([s for s in text.splitlines() if s.strip()])
+
 
 class Generic:
     
@@ -159,11 +164,16 @@ class Tester:
         server.copy(str(self.path.joinpath("testbank")),'/tmp')       
         self.results[server.host] = {}
         for test in [self.tests[i-1] for i in test_indexes]:
-            results = server.run('/tmp/testbank/%s/%s.py'%(test,test))
+            parameter = ' a' if not self.errors_only else ''
+            results = server.run('/tmp/testbank/%s/%s.py%s'%(test,test,parameter))
             if self.out:
                 if 'response' in results:
-                    self.print (results['response'])
-                    self.print (results['error'])
+                    resp = remove_blank_lines(results['response'])
+                    errs = remove_blank_lines(results['error'])
+                    if resp:
+                        self.print(resp)
+                    if errs:
+                        self.print(errs)
             self.results[server.host][test]=results
         server.run('rm -rf /tmp/testbank')
         server.close()
@@ -183,10 +193,12 @@ class Tester:
         for i in test_indexes:
             test = self.tests[i-1] 
             lines = open(self.path.joinpath('testbank/%s/%s.py'%(test,test))).readlines()
-            if "#run_once" in [x.lower().strip() for x in lines]:
-                first_server.append(i)
-            else:
-                all_servers.append(i)
+            lines = [x.lower().strip() for x in lines]
+            if "#dont_run" not in lines:
+                if "#run_once" in lines:
+                    first_server.append(i)
+                else:
+                    all_servers.append(i)
         return first_server,all_servers
             
     def run_tests(self,test_indexes=[],run_all=False):
@@ -194,7 +206,7 @@ class Tester:
             test_indexes = [i+1 for i in range(len(self.tests))]
         self.results = {}
         run_on_first_server,run_on_all_servers = self.split_tests(test_indexes)
-        first_server_thread = self.run_tests_on_server(self.servers[0],test_indexes)
+        first_server_thread = self.run_tests_on_server(self.servers[0],run_on_first_server+run_on_all_servers)
         other_servers_threads = [self.run_tests_on_server(server,run_on_all_servers) for \
                    server in self.servers[1:]]
         threads = [first_server_thread]+other_servers_threads                              
@@ -202,12 +214,12 @@ class Tester:
             thread.join()
 
     def print_report(self):
-        if self.json:
-            res = self.get_errors_only() if self.errors_only else self.results
-            if res:
+        res = self.get_errors_only() if self.errors_only else self.results
+        if res:
+            if self.json:
                 self.print (json.dumps(res,sort_keys=True, indent=4))
                 self.log_file.close()
-                os.system('./collect_diags.sh')
+            os.system('./collect_diags.sh')
         
 # MAIN and arguments parser
 if __name__=="__main__":
