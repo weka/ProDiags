@@ -1,19 +1,10 @@
 #!/usr/bin/env python3
+import pathlib,os,sys,argparse,json,config,traceback,requests,io,tarfile,socket
 from threading import Thread
-import pathlib
 from time import sleep
 from random import randint
-import os
-import sys
-import argparse
 from scp import SCPClient
 from paramiko import SSHClient,AutoAddPolicy
-import json
-import config
-import traceback
-import requests
-import io
-import tarfile
 
 def threaded(fn):
     """
@@ -24,6 +15,45 @@ def threaded(fn):
         thread.start()
         return thread
     return wrapper
+
+class Generic:
+    
+    def __init__(self):
+        self.path = pathlib.Path(__file__).parent.absolute()
+  
+    def update(self):
+        resp = requests.get(config.TAR_URL)
+        fo = io.BytesIO(resp.content)
+        tar = tarfile.open(fileobj = fo)
+        cur_version = float(tar.extractfile("./VERSION").read().decode("utf-8").strip())
+        my_version = float(open(self.path.joinpath("VERSION")).read().strip())                           
+        if cur_version>my_version:
+            answer = input("There is new version, do you want to update? ((Y)es/(N)o)")
+            if answer.lower() in ["y","yes"]:
+                tar.extractall()
+        else:
+            print ("No new updates found")
+    
+    def version(self):
+        lines = os.popen("cat VERSION").read().strip()
+        tools_version = str(lines)
+        print ('WekaIO_ProDiags version: ' +tools_version)
+
+    def test_internet(self):
+        website = ("lib.ru")
+        if socket.gethostbyname(website) != "81.176.66.163":
+            print("The host is not connected to the internet, unable to check for updates")
+            sys.exit(1)
+        else:
+            return 0
+
+    def testuser(self):
+        user = os.getuid()
+        if user != 0:
+            print("This program requires root privileges. Run as root or using 'sudo'.")
+            sys.exit()
+        else:
+            return 0
 
 # Connection class to perform SSH commands on remote server
 class Connection:
@@ -76,7 +106,6 @@ class Tester:
         self.file = sys.stdout
         self.log_file = open('/var/log/WekaIO_ProDiags.log','w')
 
-
     def print(self,*args):
         print(*args,file = self.file)
         print(*args,file = self.log_file)
@@ -99,19 +128,14 @@ class Tester:
     # Getting list of servers output from weka cluster host command performed locally on backend system
     def get_servers(self):
         ver = self.get_weka_version()
-        if ver>="3.9.0":
+        if ver in ("3.9.0","3.9.1","3.9.2","3.9.3","3.10.0.1-beta"):
             lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
-        elif ver>="3.10.0.1-beta":
-            lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
-        elif ver>="3.9.3":
-            lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
-        elif ver>="3.8.1":
+        elif ver=="3.8.1":
             lst = os.popen("/usr/bin/weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
-        if not lst:
-            print('Could not find "weka cluster host" command in that system')
-            sys.exit(1)
         else:
-            return [Connection({'host':ip,'username':config.USERNAME,'password':config.PASSWORD}) for ip in lst]
+            print('Weka version '+ver+' is not supported by WekaIO_ProDiags tool')
+            sys.exit(1)
+        return [Connection({'host':ip,'username':config.USERNAME,'password':config.PASSWORD}) for ip in lst]
 
     # Testbank directory within the tool directory includes the tests fo runtime
     def get_tests(self):
@@ -177,19 +201,6 @@ class Tester:
         for thread in threads:
             thread.join()
 
-    def update(self):
-        resp = requests.get(config.TAR_URL)
-        fo = io.BytesIO(resp.content)
-        tar = tarfile.open(fileobj = fo)
-        cur_version = float(tar.extractfile("./VERSION").read().decode("utf-8").strip())
-        my_version = float(open(self.path.joinpath("VERSION")).read().strip())                           
-        if cur_version>my_version:
-            answer = input("There is new version, do you want to update? ((Y)es/(N)o)")
-            if answer.lower() in ["y","yes"]:
-                tar.extractall()
-        else:
-            print ("No new updates found")
-
     def print_report(self):
         if self.json:
             res = self.get_errors_only() if self.errors_only else self.results
@@ -198,12 +209,12 @@ class Tester:
                 self.log_file.close()
                 os.system('./collect_diags.sh')
         
-                           
-
 # MAIN and arguments parser
 if __name__=="__main__":
     tester = Tester()
+    generic = Generic()
     parser = argparse.ArgumentParser()
+    parser.add_argument("-v,","--version",  action='store_true',help="WekaIO_ProDiags version")
     parser.add_argument("-u","--update",  action='store_true',help="Software update")
     parser.add_argument("-l","--list",  action='store_true',help="Show all available tests")
     parser.add_argument("-r","--run", nargs='+',metavar='N',type=int,help="Run specified tests")
@@ -228,12 +239,18 @@ if __name__=="__main__":
         tester.errors_only = True
     tester.file = args.file
     if args.update:
-        tester.update()
+        generic.test_internet()
+        generic.update()
+    elif args.version:
+        generic.version()
     elif args.list:
+        generic.testuser()
         tester.pp_tests()
     elif args.run:
+        generic.testuser()
         tester.run_tests(args.run)
     elif args.runall:
+        generic.testuser()
         tester.run_tests(run_all=True)
     tester.print_report()
 # Print test results
