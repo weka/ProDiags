@@ -226,7 +226,7 @@ if __name__=="__main__":
     tester = Tester()
     generic = Generic()
     parser = argparse.ArgumentParser()
-    parser.add_argument("-v,","--version",  action='store_true',help="WekaIO_ProDiags version")
+    parser.add_argument("-v","--version",  action='store_true',help="WekaIO_ProDiags version")
     parser.add_argument("-u","--update",  action='store_true',help="Software update")
     parser.add_argument("-l","--list",  action='store_true',help="Show all available tests")
     parser.add_argument("-r","--run", nargs='+',metavar='N',type=int,help="Run specified tests")
