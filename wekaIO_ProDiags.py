@@ -33,7 +33,7 @@ class Generic:
         cur_version = float(tar.extractfile("./VERSION").read().decode("utf-8").strip())
         my_version = float(open(self.path.joinpath("VERSION")).read().strip())                           
         if cur_version>my_version:
-            answer = input("There is new version, do you want to update? ((Y)es/(N)o)")
+            answer = input("There is a new version, do you want to update? ((Y)es/(N)o)")
             if answer.lower() in ["y","yes"]:
                 tar.extractall()
         else:
