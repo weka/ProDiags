@@ -45,3 +45,7 @@ connection verification, root user verification. Version output. Support for
 #dont_run parameter in test, so test is excluded. Removed white spaces on
 output of tests to look cleaner. If no -e specified everything is spit on the
 screen.
+
+Version 1.0 12/17/2020
+Fixed log file closing when running with verbosity (minor fix)
+

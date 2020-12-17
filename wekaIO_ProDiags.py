@@ -218,7 +218,7 @@ class Tester:
         if res:
             if self.json:
                 self.print (json.dumps(res,sort_keys=True, indent=4))
-                self.log_file.close()
+            self.log_file.close()
             os.system('./collect_diags.sh')
         
 # MAIN and arguments parser
