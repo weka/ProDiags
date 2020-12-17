@@ -253,11 +253,13 @@ if __name__=="__main__":
     if args.update:
         generic.test_internet()
         generic.update()
+        sys.exit(0)
     elif args.version:
         generic.version()
     elif args.list:
         generic.testuser()
         tester.pp_tests()
+        sys.exit(0)
     elif args.run:
         generic.testuser()
         tester.run_tests(args.run)
