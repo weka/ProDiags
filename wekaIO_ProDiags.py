@@ -30,7 +30,7 @@ class Generic:
         resp = requests.get(config.TAR_URL)
         fo = io.BytesIO(resp.content)
         tar = tarfile.open(fileobj = fo)
-        cur_version = float(tar.extractfile("VERSION").read().decode("utf-8").strip())
+        cur_version = float(tar.extractfile("./VERSION").read().decode("utf-8").strip())
         my_version = float(open(self.path.joinpath("VERSION")).read().strip())                           
         if cur_version>my_version:
             answer = input("There is a new version, do you want to update? ((Y)es/(N)o)")
