@@ -49,3 +49,9 @@ screen.
 Version 1.0 12/17/2020
 Fixed log file closing when running with verbosity (minor fix)
 
+Version 1.1 12/23/2020
+Added an option for user to agree to upload the logs for analysis.
+Added a standalone version without the .py extension, avoid extra python libraries
+installation. For ipmi tests, added localalized ipmiutil package for RH /
+Centos Linux distros. MC (minio client is not added as we assume there is no
+internet available)

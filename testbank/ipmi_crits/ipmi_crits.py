@@ -53,8 +53,12 @@ if [ $? -eq 1 ]; then
             echo "Trying to fetch from third party place"
             curl http://ssh.i-clef.com/WekaIO_ProDiags/lib/ipmiutil-3.1.6-1.1.x86_64.rpm -o /tmp/ipmiutil-3.1.6-1.1.x86_64.rpm -s 1> /dev/null 2> /dev/null
             if [ $? -eq 1 ]; then
-                echo "Could not download third party tool properly..."
-                res="1"
+                echo "Could not download third party tool properly, trying to install local copy from /tmp/lib/"
+                rpm --quiet -i /tmp/lib/ipmiutil-3.1.6-1.1.x86_64.rpm 1> /dev/null 2> /dev/null
+                if [ $? -eq 1 ]; then
+                    echo "Could not install ipmiutil properly"
+                    res="1"
+                fi
             else
                 rpm --quiet -i /tmp/ipmiutil-3.1.6-1.1.x86_64.rpm 1> /dev/null 2> /dev/null
                 if [ $? -eq 1 ]; then

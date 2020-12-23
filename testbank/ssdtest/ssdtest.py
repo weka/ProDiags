@@ -53,18 +53,12 @@ if [ $? -eq 1 ]; then
 	exit 1
 fi
 
-weka_version=`weka version | grep "* " | sed 's/\*//g'`
-if [ "$weka_version" == " 3.9.0" ]; then
+weka_version=`weka version | grep "* " | awk -F. {'print $1"."$2'} | sed 's/\*//g'`
+if [ "$weka_version" == " 3.9" ]; then
     weka cluster drive | grep -i ' active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
-elif [ "$weka_version" == " 3.9.1" ]; then
+elif [ "$weka_version" == " 3.10" ]; then
     weka cluster drive | grep -i ' active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
-elif [ "$weka_version" == " 3.9.2" ]; then
-    weka cluster drive | grep -i ' active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
-elif [ "$weka_version" == " 3.9.3" ]; then
-    weka cluster drive | grep -i ' active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
-elif [ "$weka_version" == " 3.10.0.1-beta" ]; then
-    weka cluster drive | grep -i ' active' | awk {'print "echo ============================== ;\n echo NodeId: "$4" and DiskId: "$1" && weka debug manhole -J -n "$4" ssd_get_nvme_smart_log_page diskId="$1" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
-else # For versino 3.8.1
+else # For version 3.8.1 or other than 3.9 and 3.10
     weka cluster drive | grep -i ' active' | awk {'print "echo ============================== ;\n echo NodeId: "$8" and DiskId: "$2" && weka debug manhole -J -n "$8" ssd_get_nvme_smart_log_page diskId="$2" \| grep \"percentage_used\\|readSuccess\\|available_spare\\|composite_temperature\\|critical_warning\\|errMsg\" \| sed '\''s/,//g'\'' \| sed '\''s/\"//g'\'' \| sed '\''s/^ *//g'\''"'} > /tmp/ssd_output_list.sh 2> /dev/null
 fi
 

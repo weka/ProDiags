@@ -122,7 +122,7 @@ class Tester:
             print ("%s. %s"%(i+1,t))
 
     def get_weka_version(self):
-        lines = os.popen("/usr/bin/weka version").readlines()
+        lines = os.popen("/usr/bin/weka version | awk -F. {'print $1\".\"$2'}").readlines()
         for l in lines:
             l=l.strip()
             if l.startswith("*"):
@@ -133,9 +133,9 @@ class Tester:
     # Getting list of servers output from weka cluster host command performed locally on backend system
     def get_servers(self):
         ver = self.get_weka_version()
-        if ver in ("3.9.0","3.9.1","3.9.2","3.9.3","3.10.0.1-beta"):
+        if ver in ("3.9","3.10"):
             lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
-        elif ver=="3.8.1":
+        elif ver=="3.8":
             lst = os.popen("/usr/bin/weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
         else:
             print('Weka version '+ver+' is not supported by WekaIO_ProDiags tool')
@@ -161,7 +161,9 @@ class Tester:
                                          'traceback':traceback.format_exc()}
             return            
         server.run('rm -rf /tmp/testbank')
+        server.run('rm -rf /tmp/lib')
         server.copy(str(self.path.joinpath("testbank")),'/tmp')       
+        server.copy(str(self.path.joinpath("lib")),'/tmp')       
         self.results[server.host] = {}
         for test in [self.tests[i-1] for i in test_indexes]:
             parameter = ' a' if not self.errors_only else ''
@@ -176,6 +178,7 @@ class Tester:
                         self.print(errs)
             self.results[server.host][test]=results
         server.run('rm -rf /tmp/testbank')
+        server.run('rm -rf /tmp/lib')
         server.close()
 
 
@@ -256,6 +259,7 @@ if __name__=="__main__":
         sys.exit(0)
     elif args.version:
         generic.version()
+        sys.exit(0)
     elif args.list:
         generic.testuser()
         tester.pp_tests()

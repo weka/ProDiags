@@ -1,26 +1,27 @@
-WekaIO_ProDiags tool version 1.0
+WekaIO_ProDiags tool version 1.1
 Written by Daniel Slabodar (October 2020) bugz to daniel@i-clef.com, daniels@weka.io or dslabodar@gmail.com
 
 Tool is written in Python language to supprot multithreaded and multinode runtime of various hardware diagnostic tests allocated in testbank directory for Weka.IO
 ==============================================================================
-usage: wekaIO_ProDiags.py [-h] [-u] [-l] [-r N [N ...]] [-ra] [-e] [-nj] [-no]
-                          [-f PATH]
+usage: wekaIO_ProDiags.py or for standalone version ./wekaIO_ProDiags [-h] [-v] [-u] [-l] [-r N [N ...]] [-ra] [-e] [-nj]
+                          [-no] [-f PATH]
 optional arguments:
-  -h, --help            show this help message and exit
-  -u, --update          Software update
-  -l, --list            Show all available tests
-  -r N [N ...], --run N [N ...]
-                        Run specified tests
-  -ra, --runall         Run all available tests
-  -e, --errors_only     Show failed tests only
-  -nj, --nojson         no json report
-  -no, --nooutput       no scripts output
-  -f PATH, --file PATH  Output file (default: standard output)
+    -h, --help            show this help message and exit
+    -v, --version         WekaIO_ProDiags version
+    -u, --update          Software update
+    -l, --list            Show all available tests
+    -r N [N ...], --run N [N ...]
+Run specified tests
+    -ra, --runall         Run all available tests
+    -e, --errors_only     Show failed tests only
+    -nj, --nojson         no JSON report
+    -no, --nooutput       no scripts output
+    -f PATH, --file PATH  Output file (default: standard output)
 
-Example: ./wekaIO_ProDiags.py -ra -e -no (would run all tests in testbank displaying errors only and JSON output only format)
-         ./wekaIO_ProDiags.py -l (would display list of tests in testbank)
-	 ./wekaIO_ProDiags.py -r 3 -e -no (would run test number 3 from testbank displaying errors only and JSON output only format)
-	 ./wekaIO_ProDiags.py -u (would test if there are any new updates - URL configured in config.py section)
+Example: ./wekaIO_ProDiags -ra -e -nj (would run all tests in testbank displaying errors only and TEXT output only format)
+         ./wekaIO_ProDiags -l (would display list of available tests in testbank directory)
+	     ./wekaIO_ProDiags -r 3 2 1 -e -no (would run tests number 3,2 and 1 from testbank displaying errors only and JSON output only format)
+	     ./wekaIO_ProDiags -u (would test if there are any new updates - URL configured in config.py section)
 
 Installation & Runtime:
 	 Run as sudo user:
@@ -28,10 +29,14 @@ Installation & Runtime:
 	 cd WekaIO_ProDiags
 	 wget http://ssh.i-clef.com/WekaIO_ProDiags/latest.tar
 	 tar xvf latest.tar
-	 ./wekaIO_ProDiags.py
+	 ./wekaIO_ProDiags.py or ./wekaIO_ProDiags (for standalone version)
          
 Please use setup.sh to install the required python libraries!
-Needed Python 3.x.x libraries:
+
+Adding #run_once in test header would run that specific test only once
+Adding #dont_run in test would exclude the test from running
+
+Needed Python 3.x.x libraries if running a standalone version, only python3 is required:
 ====================================
 threading Thread
 pathlib

@@ -26,6 +26,22 @@ fi
 
 }
 
+function ask_perm()
+{
+# Function to ask for logs upload permission
+echo -en "We are going to upload the log to a centralized logging server for Weka support personel to look at it, do you agree? (yes/no/(Default: Yes)): "; read b
+case $b in 
+	yes|Yes|YES|y|Y	) echo "Thank you, uploading the logs"
+				return 0;;
+	no|No|NO|n|N	) echo "Thank you, log upload cancelled"
+				exit 0;;
+	*		) echo "Default selected, uploading the logs"
+				return 0;;
+esac
+
+}
+
+
 function get_minio()
 {
 #Getting Minio client
@@ -98,6 +114,7 @@ rm -rf ~/root/.mc*
 
 # MAIN
 check_outer_space
+ask_perm
 get_minio
 set_alias
 get_weka_cluster_info
