@@ -32,7 +32,7 @@ testname
 rm -rf /tmp/gb.txt 1 >/dev/null 2> /dev/null
 array_backends=( `weka cluster host -b | awk {'print $2'} | grep -vi 'id'` )
 for t in ${array_backends[@]}; do
-	weka cluster host info-hw | grep -i -A63 $t | grep -i "total:" | awk '{ printf "%5.1f\n", $2 /1024/1024/1024 }' >> /tmp/gb.txt
+	weka cluster host info-hw | grep -i -A100 $t | grep -i "total:" | awk '{ printf "%5.1f\n", $2 /1024/1024/1024 }' >> /tmp/gb.txt
 done
 diff=`cat /tmp/gb.txt|uniq|wc -l`
 
