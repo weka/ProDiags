@@ -55,3 +55,8 @@ Added a standalone version without the .py extension, avoid extra python librari
 installation. For ipmi tests, added localalized ipmiutil package for RH /
 Centos Linux distros. MC (minio client is not added as we assume there is no
 internet available)
+
+Version 1.2 1/19/2021
+Fixed ssdtest to allow proper NVMe spare defaults handling. Fixed support for
+both IPMItool and IPMIutil packages specifically for Hitachi case. Changed
+default logs upload behaviour to NO

@@ -75,7 +75,7 @@ fi
 
 function check_dmidecode()
 {
-# Looking for IPMItool availabilit in BIOS
+# Looking for IPMItool availability in the BIOS
 which dmidecode 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
 	echo "dmidecode tool not found"
@@ -97,15 +97,34 @@ else
 fi
 }
 
+
 function start_test()
 {
-# Starting ECC DIMM test
-rm -rf /tmp/ipmiutil_output.txt
-ipmiutil sel -e > /tmp/ipmiutil_output.txt
-cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" 1> /dev/null 2> /dev/null
-if [ $? -eq 0 ]; then
-	cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" | tail -6
-	res="1"
+# Starting general crits test
+# Workaround for systems which could not install ipmiutil package properly
+which ipmiutil 1> /dev/null 2> /dev/null
+if [ $? -eq 1 ]; then
+    which ipmitool 1> /dev/null 2> /dev/null
+    if [ $? -eq 1 ]; then
+        echo "Could not find ipmitool and ipmiutil binaries, IPMI tests could not be performed"
+        res="1"
+    else
+        rm -rf /tmp/ipmitool_output.txt
+        ipmitool sel elist > /tmp/ipmitool_output.txt
+        cat /tmp/ipmitool_output.txt | grep -vi "unknown\|os\|supply" 1> /dev/null 2> /dev/null
+        if [ $? -eq 0 ]; then
+            cat /tmp/ipmitool_output.txt | tail -6
+            res="1"
+        fi
+    fi
+else
+    rm -rf /tmp/ipmiutil_output.txt
+    ipmiutil sel -e > /tmp/ipmiutil_output.txt
+    cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" 1> /dev/null 2> /dev/null
+    if [ $? -eq 0 ]; then
+	    cat /tmp/ipmiutil_output.txt |grep -i "bmc" |grep -i "crt" | tail -6
+	    res="1"
+    fi
 fi
 
 }

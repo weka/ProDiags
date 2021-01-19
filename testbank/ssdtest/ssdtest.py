@@ -15,7 +15,7 @@
 # Global testing status and consts
 max_temperature="550" # in 550 = 55.0C
 spares="95" # lowest spare for SSD endurance
-spares_threshold="5" # statically set by system to 5
+spares_threshold="10" # statically set by system to 5
 
 res="0"
 
@@ -91,8 +91,8 @@ for i in `seq $iterations`; do
 	fi
 	available_spare_threshold=`grep -i "available_spare_threshold" /tmp/ssd_compare.txt | head -$i | tail -1`
 	available_spare_threshold_res=`echo $available_spare_threshold | awk {'print $2'}`
-	if [ $available_spare_threshold_res -ne $spares_threshold ]; then
-		echo "available_spare_threshold parameter displaying : $available_threshold_spare_res for $diskid"
+	if [ $available_spare_threshold_res -gt $spares_threshold ]; then
+		echo "available_spare_threshold parameter displaying : $available_spare_threshold_res for $diskid"
 		res="1"
 	fi
 	composite_temperature=`grep -i "composite_temperature:" /tmp/ssd_compare.txt | head -$i | tail -1`
