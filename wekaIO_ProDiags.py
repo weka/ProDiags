@@ -1,3 +1,48 @@
+
+n.n.n / 2021-08-16
+==================
+
+  * Fixed ssdtest to allow proper NVMe spare defaults handling. Fixed support for both IPMItool and IPMIutil packages specifically for Hitachi case. Changed default logs upload behaviour to NO
+  * Fixed minior bug in physical RAM comparison test
+  * Minor fix in version update
+  * Added an option for user to agree to upload the logs for analysis. Added a standalone version without the .py extension, avoid extra python libraries installation. For ipmi tests, added localalized ipmiutil package for RH / Centos Linux distros. MC (minio client is not added as we assume there is no internet available)
+  * Minor bug fix in update
+  * Fixed log collection on list of tests command
+  * Fixed log file closing if running with full file verbosity
+  * Minor cosmetic fixes and fixed SSD test for mismatching ACTIVE vs INACTIVE SSD drives
+  * Removed comma
+  * Updaed version file to be 1.0
+  * Added support for versions 3.9.3, 3.9.2, 3.9.1. Cosmetics on output, internet connection verification, root user verification. Version output. Support for output of tests to look cleaner. If no -e specified everything is spit on the screen.
+  * Added internet check before update, added root user check
+  * Added support for version 3.9.3, fixed tailing outputs for IPMI tests
+  * Minor fix in collect_diags.sh
+  * Fixed logs collection to verify internet connection If internet connection not found, won't collect logs
+  * Fixes in IPMI scripts to support ipmiutil download from 3rd party location for CentOS 8 Fixed memtest, added support for weka 3.10.x-beta. Small bug fixes
+  * Added ECC CPU, and general critical BMC errors test, minor bugs and fixes Beatified test outputs according to David H. request
+  * Fixed some minior issues and cosmetics output
+  * Minor fix for running minio client in special SHELL environments
+  * Updated README file with latest version number
+  * Version 0.7 11/19/2020 Added ECC RAM test, added logs collection automatically to compatible S3 bucket. Small fixes and addons
+  * Added fspace test to calculate free space on boot partition and weka partition. If space below 1GiB - test would fail
+  * Fixed output and errors in some tests with Jacky feedback Added hostname and IP addresses return in tests Minor typos and fixes
+  * Added Free boot device test, Physical installed RAM allocation test Added setup.sh to install python packages as needed
+  * Updated Readme file
+  * Added beautifier for output to text and file of reported logs Added freespace test for Weka mounted partition to calculated required space for Weka installation
+  * Updated version to 0.3
+  * Added support for version 3.9.0 for performing SSD test as weka output is changed for weka cluster drive and weka cluster host commands
+  * Updated Readme file some more
+  * Removed some bogus directories and updated version & readme files
+  * Added -u option to perform udpate if VERSION file is updated
+  * Added an RAM allocation test for weka, if more than one hosts reports different Memory size, the test would fail
+  * Added nettest for scanning each backend UP port for RX/ TX or any other physucal error
+  * Added ssdtest to look up for issues with SSD
+  * Added an option within test to run only once if configured
+  * Fixed the tests to return the correct return code - handled interesting bash conditions
+  * Added basic tests to test RAM, Out of Memory and RAM test in proc for errors Updated CHANGELOG
+  * Modified tests to support .py Added error filter as command line parameter -e
+  * Minor cosmetic changes
+  * Modified tool to support .py tests (tests not modifed yet) Added support for external SSH configuration Added some basic timeout functionality
+  * Initial upload to github code from BitBucket
 #!/usr/bin/env python3
 import pathlib,os,sys,argparse,json,config,traceback,requests,io,tarfile,socket
 from threading import Thread
@@ -133,7 +178,7 @@ class Tester:
     # Getting list of servers output from weka cluster host command performed locally on backend system
     def get_servers(self):
         ver = self.get_weka_version()
-        if ver in ("3.9","3.10"):
+        if ver in ("3.9","3.10","3.12"):
             lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
         elif ver=="3.8":
             lst = os.popen("/usr/bin/weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
