@@ -63,3 +63,7 @@ default logs upload behaviour to NO
 
 Version 1.3 8/15/2021
 Added support for Weka version 3.12 - updated scripts, binary and tests
+
+Version 1.3 8/18/2021
+Added support for Weka version 3.11 as well - recompiled the binary to support
+python 3.6.8
