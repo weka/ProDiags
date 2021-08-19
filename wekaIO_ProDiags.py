@@ -179,7 +179,7 @@ class Tester:
     def get_servers(self):
         ver = self.get_weka_version()
         if ver in ("3.9","3.10","3.11","3.12"):
-            lst = os.popen("/usr/bin/weka cluster host -b | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
+            lst = os.popen("/usr/bin/weka cluster host -b --no-header | grep UP | awk {'print $3'} | sed 's/,//g' | uniq | sort").read().split()
         elif ver=="3.8":
             lst = os.popen("/usr/bin/weka cluster host -b | grep HostId | awk {'print $3'} | uniq | sort").read().split()
         else:
