@@ -2,7 +2,7 @@
 # Tool to collect diagnostics and upload them to dedicated S3 compatible cloud bucket
 
 # Default settings
-url="http://ssh.i-clef.com:9000"
+url="http://xxx:9000"
 name="myminio"
 bucketname="wekaioprodiags"
 akey="YODAINSPACE"
@@ -51,7 +51,7 @@ which curl 1> /dev/null 2> /dev/null
 if [ $? -eq 1 ]; then
 	exit 1
 fi
-curl -s http://ssh.i-clef.com/WekaIO_ProDiags/lib/mc -o mc
+curl -s http://xxx/WekaIO_ProDiags/lib/mc -o mc
 if [ -r mc ] ; then
 	chmod +x mc
 else
